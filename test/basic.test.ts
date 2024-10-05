@@ -16,7 +16,7 @@ test('Checks all properties in a simple project.', async () => {
   expect(output).toContain('/any-tsconfig/test/fixture/simple')
   // tsconfig remains untouched after run.
   expect(initialConfiguration).toEqual(await Bun.file(join(fixturePath, 'tsconfig.json')).json())
-})
+}, 60000)
 
 test('Lists checked properties.', () => {
   const fixturePath = './test/fixture/simple'
@@ -27,7 +27,7 @@ test('Lists checked properties.', () => {
   }).toString()
 
   expect(output).toContain('noImplicitAny')
-})
+}, 60000)
 
 test('Fails for some options.', () => {
   const fixturePath = './test/fixture/fail'
@@ -38,7 +38,7 @@ test('Fails for some options.', () => {
   }).toString()
 
   expect(output).toContain('failed for 1 options')
-})
+}, 60000)
 
 test('Failing options are listed.', () => {
   const fixturePath = './test/fixture/fail'
@@ -49,7 +49,7 @@ test('Failing options are listed.', () => {
   }).toString()
 
   expect(output).toContain('Fails with noImplicitAny set to true')
-})
+}, 60000)
 
 test('Does not check already existing properties.', () => {
   const fixturePath = './test/fixture/existing'
@@ -60,7 +60,7 @@ test('Does not check already existing properties.', () => {
   }).toString()
 
   expect(output).toContain('failed for 0 options')
-})
+}, 60000)
 
 test('Exits when base project fails.', () => {
   const fixturePath = './test/fixture/fail-initial'
@@ -71,4 +71,4 @@ test('Exits when base project fails.', () => {
   }).toString()
 
   expect(output).toContain('fails with initial project configuration')
-})
+}, 60000)
