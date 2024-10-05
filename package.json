@@ -1,4 +1,10 @@
 {
+  "name": "any-tsconfig",
+  "description": "CLI to check if your project compiles with various TypeScript configuration options.",
+  "version": "0.0.0-development",
+  "repository": "github:tobua/any-tsconfig",
+  "license": "MIT",
+  "author": "Matthias Giger",
   "scripts": {
     "check": "biome check --write .",
     "clean": "git clean -fdx test/fixture",
