@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 import { execSync } from 'node:child_process'
 import { join } from 'node:path'
 import Bun from 'bun'
@@ -11,7 +12,7 @@ log(`Checking project in ${process.cwd()}`)
 const listProperties = process.argv.includes('--list')
 
 try {
-  execSync('bun tsc --noEmit --skipLibCheck', { stdio: 'inherit' })
+  execSync('bun tsc --noEmit --skipLibCheck', { stdio: 'pipe' })
 } catch (_error) {
   log('"tsc" fails with initial project configuration')
   process.exit(0)
@@ -39,7 +40,7 @@ for (const [option, values] of options) {
     tsconfig.compilerOptions[option] = value
     await Bun.write(tsconfigPath, JSON.stringify(tsconfig, null, 2))
     try {
-      execSync('bun tsc --noEmit', { stdio: 'inherit' })
+      execSync('bun tsc --noEmit', { stdio: 'pipe' })
       if (listProperties) {
         log(`Works with ${option} set to ${value}`)
       }
@@ -54,6 +55,10 @@ for (const [option, values] of options) {
 }
 
 log(`Checking successful for ${state.success.length} options and failed for ${state.fail.length} options.`)
+
+if (state.fail.length > 0) {
+  log(`The following options are failing: ${state.fail.map((item) => `"${item.name}": ${item.value}`).join(', ')}`)
+}
 
 // Restore initial user configuration.
 await Bun.write(tsconfigPath, JSON.stringify(initialConfiguration, null, 2))
