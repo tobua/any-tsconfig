@@ -2,15 +2,9 @@ import { execSync } from 'node:child_process'
 import { join } from 'node:path'
 import Bun from 'bun'
 import { create } from 'logua'
+import { options } from './options'
 
 const log = create('my-pkg', 'blue')
-
-const options: [string, (string | boolean)[]][] = [
-  ['noImplicitAny', [true, false]],
-  ['strictNullChecks', [true, false]],
-  ['allowUnreachableCode', [true, false]],
-  ['allowSyntheticDefaultImports', [true, false]],
-]
 
 log(`Checking project in ${process.cwd()}`)
 
@@ -25,18 +19,23 @@ try {
 
 const tsconfigPath = join(process.cwd(), 'tsconfig.json')
 const tsconfig = await Bun.file(tsconfigPath).json()
-const initialConfiguration = { ...tsconfig }
+const initialConfiguration = structuredClone(tsconfig)
 const state: { success: { name: string; value: string }[]; fail: { name: string; value: string }[] } = { success: [], fail: [] }
 
 tsconfig.compilerOptions ??= {}
 tsconfig.compilerOptions.skipLibCheck = true // Will check root node_modules.
 
 for (const [option, values] of options) {
-  if (typeof initialConfiguration.compilerOptions !== 'undefined' && Object.hasOwn(initialConfiguration.compilerOptions, option)) {
-    // Skip options where the user has made a specific choice.
-    continue
-  }
   for (const value of values) {
+    if (
+      typeof initialConfiguration.compilerOptions !== 'undefined' &&
+      Object.hasOwn(initialConfiguration.compilerOptions, option) &&
+      initialConfiguration.compilerOptions[option] === value
+    ) {
+      // Skip options where the user has made a specific choice.
+      continue
+    }
+
     tsconfig.compilerOptions[option] = value
     await Bun.write(tsconfigPath, JSON.stringify(tsconfig, null, 2))
     try {

@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "noImplicitAny": false,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "allowUnreachableCode": false,
-    "allowSyntheticDefaultImports": false
+    "allowSyntheticDefaultImports": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true
   }
 }

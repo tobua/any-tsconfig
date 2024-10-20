@@ -2,6 +2,15 @@ import { expect, test } from 'bun:test'
 import { execSync } from 'node:child_process'
 import { join } from 'node:path'
 import Bun from 'bun'
+import { options } from '../options'
+
+function countOptions(): number {
+  let count = 0
+  for (const [, values] of options) {
+    count += values.length
+  }
+  return count
+}
 
 test('Checks all properties in a simple project.', async () => {
   const fixturePath = './test/fixture/simple'
@@ -37,7 +46,7 @@ test('Fails for some options.', () => {
     stdio: 'pipe',
   }).toString()
 
-  expect(output).toContain('failed for 1 options')
+  expect(output).toContain(`failed for ${countOptions()} options`)
 }, 60000)
 
 test('Failing options are listed.', () => {
@@ -54,12 +63,13 @@ test('Failing options are listed.', () => {
 test('Does not check already existing properties.', () => {
   const fixturePath = './test/fixture/existing'
 
-  const output = execSync('bun ./../../../index.ts', {
+  const output = execSync('bun ./../../../index.ts --list', {
     cwd: fixturePath,
     stdio: 'pipe',
   }).toString()
 
-  expect(output).toContain('failed for 0 options')
+  expect(output).toContain(`successful for ${countOptions() - 6} options`)
+  expect(output).toContain('failed for 1 options')
 }, 60000)
 
 test('Exits when base project fails.', () => {

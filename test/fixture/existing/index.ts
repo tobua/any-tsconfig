@@ -1,2 +1,1 @@
-// noImplicitAny
-const double = (value) => value * 2
+const double = (value: number) => value * 2
